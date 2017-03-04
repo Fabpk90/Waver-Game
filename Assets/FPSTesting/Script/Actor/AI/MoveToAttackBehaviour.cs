@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveToAttackBehaviour : MonoBehaviour {
 
-    public Actor actorToChase;
+    private Actor actorToChase = null;
     private SphereCollider sphereCollider;
 
 
@@ -16,7 +16,8 @@ public class MoveToAttackBehaviour : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        //transform.position = Vector3.MoveTowards(transform.position, actorToChase.transform.position, 10.0f);
+        if (actorToChase != null)
+            MoveTo(actorToChase.gameObject);
         
 	}
 
@@ -24,7 +25,7 @@ public class MoveToAttackBehaviour : MonoBehaviour {
     {
         if(other.GetComponent<Player>() != null)
         {
-
+            actorToChase = other.GetComponent<Player>();
         }
     }
 

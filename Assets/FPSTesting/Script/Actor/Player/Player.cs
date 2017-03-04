@@ -13,6 +13,8 @@ public class Player : Actor {
 
     public List<BringableObject> inventory;
 
+    public List<AudioClip> fireShots;
+
 	// Use this for initialization
 	void Start () {
 	}
@@ -28,7 +30,7 @@ public class Player : Actor {
 	}
 
     private void Shoot()
-    {
+    {    
         RaycastHit hit;
 
         //the ray position (center of the camera)
@@ -48,6 +50,13 @@ public class Player : Actor {
                 enemy.TakeDamage(weapon.damage);
             }
         }
+
+        PlayRandomShotSound();
+    }
+
+    private void PlayRandomShotSound()
+    {
+        AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], weapon.transform.position);
     }
 
     override public void Dying()
@@ -57,6 +66,6 @@ public class Player : Actor {
 
     private Vector3 GetRandomSpawnPoint()
     {
-        return spawnPoints[Random.Range(0, spawnPoints.Length)].position;
+        return spawnPoints[Random.Range(0, spawnPoints.Length - 1)].position;
     }
 }
