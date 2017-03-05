@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace Assets.FPSTesting.Utils
 {
@@ -18,12 +19,22 @@ namespace Assets.FPSTesting.Utils
 
         public SpawnPoint[] enemySpawnPoints;
 
+        public Canvas Inventory;
+
+        public Text ammoText;
+        public Text weaponName;
 
         private void Start()
         {
             listEnemy = new List<EnemyController>();
 
             GenerateWave(wave);
+        }
+
+        public void InitHUD(int magAmmo, int ammo, string weaponDesc)
+        {
+            ammoText.text = "" + magAmmo + "/" + ammo;
+            weaponName.text = weaponDesc;
         }
 
         private void GenerateWave(int wave)
@@ -51,6 +62,16 @@ namespace Assets.FPSTesting.Utils
         private int GetRandomSpawnPoint()
         {
             return Random.Range(0, enemySpawnPoints.Length);
+        }
+
+        public void ToggleInventory()
+        {
+            Inventory.enabled = !Inventory.enabled;
+        }
+
+        public void ShotFired(int magAmmo, int ammo)
+        {
+            ammoText.text = "" + magAmmo + "/" + ammo;
         }
     }
 }

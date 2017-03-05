@@ -5,12 +5,13 @@ using UnityEngine;
 public class MoveToAttackBehaviour : MonoBehaviour {
 
     private Actor actorToChase = null;
-    private SphereCollider sphereCollider;
+
+    private float attack;
 
 
     private void Start()
     {
-        sphereCollider = GetComponent<SphereCollider>();
+        attack = GetComponent<Actor>().attackDamage;
     }
 
     // Update is called once per frame
@@ -18,6 +19,10 @@ public class MoveToAttackBehaviour : MonoBehaviour {
 
         if (actorToChase != null)
             MoveTo(actorToChase.gameObject);
+        else
+        {
+
+        }
         
 	}
 
@@ -26,13 +31,28 @@ public class MoveToAttackBehaviour : MonoBehaviour {
         if(other.GetComponent<Player>() != null)
         {
             actorToChase = other.GetComponent<Player>();
+            Debug.Log("qsd");
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.GetComponent<Player>() != null)
+        {
+            Player player = collision.collider.GetComponent<Player>();
+            player.TakeDamage(attack);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+
     }
 
 
 
     private void MoveTo(GameObject obj)
     {
-        Vector3.MoveTowards(transform.position, obj.transform.position, sphereCollider.radius);
+       transform.position = Vector3.MoveTowards(transform.position, obj.transform.position, 0.05f);
     }
 }

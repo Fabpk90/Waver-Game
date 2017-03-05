@@ -2,19 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEditor;
 
 public class Weapon : BringableObject {
 
     public float distance;
     public float damage;
 
-    public uint ammo;
+    [SerializeField]
+    public int ammo;
+    [SerializeField]
     public int ammoMax;
 
-    public uint inMag;
-    public int maxInMag;
+    [SerializeField]
+    public int inMag;
 
-    public int fireCost = 1;
+
+    [SerializeField]
+    public int maxInMag;
+    
+
+    [SerializeField]
+    public int fireCost;
 
     public float cooldown;
 
@@ -26,7 +36,7 @@ public class Weapon : BringableObject {
     // Use this for initialization
     void Start () {
         lastShot = 0;
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -45,7 +55,12 @@ public class Weapon : BringableObject {
 
     public override void Use(ref Player player)
     {
-        lastShot = Time.time;
-        inMag -= (uint)fireCost;
+        lastShot = Time.time + cooldown;
+        inMag -= fireCost;
+    }
+
+    public void Shoot()
+    {
+        inMag -= fireCost;
     }
 }

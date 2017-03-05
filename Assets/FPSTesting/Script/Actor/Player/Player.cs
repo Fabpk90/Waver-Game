@@ -1,4 +1,5 @@
 ﻿using Assets.FPSTesting.Object;
+using Assets.FPSTesting.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +16,11 @@ public class Player : Actor {
 
     public List<AudioClip> fireShots;
 
+    public GameManager gameManager;
+
 	// Use this for initialization
 	void Start () {
+        gameManager.InitHUD(weapon.inMag, weapon.ammo, weapon.description);
 	}
 	
 	// Update is called once per frame
@@ -24,7 +28,15 @@ public class Player : Actor {
        
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Shoot();
+            if(weapon.CanShoot())
+            {
+                Shoot();
+                gameManager.ShotFired(weapon.inMag, weapon.ammo);
+            }         
+        }
+        else if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            gameManager.ToggleInventory();
         }
 		
 	}
@@ -38,9 +50,7 @@ public class Player : Actor {
 
 
         if (Physics.Raycast(rayOrigin, weaponCamera.transform.forward, out hit, weapon.distance))
-        {
-            
-           
+        {       
             if(hit.collider.GetComponent<EnemyController>() != null)
             {
                 hit.rigidbody.AddForce(-hit.normal * weapon.damage);
@@ -52,11 +62,12 @@ public class Player : Actor {
         }
 
         PlayRandomShotSound();
+        weapon.Shoot();
     }
 
     private void PlayRandomShotSound()
     {
-        AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], weapon.transform.position);
+        AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], transform.position);
     }
 
     override public void Dying()
@@ -67,5 +78,12 @@ public class Player : Actor {
     private Vector3 GetRandomSpawnPoint()
     {
         return spawnPoints[Random.Range(0, spawnPoints.Length - 1)].position;
+    }
+
+    public override bool TakeDamage(float damage)
+    {
+        Debug.Log("damage: " + damage);
+
+        return base.TakeDamage(damage);
     }
 }
