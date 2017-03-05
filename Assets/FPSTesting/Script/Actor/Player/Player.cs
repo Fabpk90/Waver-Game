@@ -18,6 +18,8 @@ public class Player : Actor {
 
     public GameManager gameManager;
 
+    public List<AudioClip> painSounds;
+
 	// Use this for initialization
 	void Start () {
         gameManager.InitHUD(weapon.inMag, weapon.ammo, weapon.description);
@@ -82,7 +84,7 @@ public class Player : Actor {
 
     public override bool TakeDamage(float damage)
     {
-        Debug.Log("damage: " + damage);
+        AudioSource.PlayClipAtPoint(painSounds[Random.Range(0, painSounds.Count)], transform.position);
 
         return base.TakeDamage(damage);
     }
