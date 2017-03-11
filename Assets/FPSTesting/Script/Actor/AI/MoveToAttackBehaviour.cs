@@ -21,7 +21,7 @@ public class MoveToAttackBehaviour : MonoBehaviour {
             MoveTo(actorToChase.gameObject);
         else
         {
-
+            //search for enemies
         }
         
 	}
@@ -31,24 +31,8 @@ public class MoveToAttackBehaviour : MonoBehaviour {
         if(other.GetComponent<Player>() != null)
         {
             actorToChase = other.GetComponent<Player>();
-            Debug.Log("qsd");
         }
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.collider.GetComponent<Player>() != null)
-        {
-            Player player = collision.collider.GetComponent<Player>();
-            player.TakeDamage(attack);
-        }
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-
-    }
-
 
 
     private void MoveTo(GameObject obj)
