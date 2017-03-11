@@ -31,10 +31,10 @@ namespace Assets.FPSTesting.Utils
             GenerateWave(wave);
         }
 
-        public void InitHUD(int magAmmo, int ammo, string weaponDesc)
+        public void InitHUD(int magAmmo, int ammo, string weaponName)
         {
             ammoText.text = "" + magAmmo + "/" + ammo;
-            weaponName.text = weaponDesc;
+            this.weaponName.text = weaponName;
         }
 
         private void GenerateWave(int wave)

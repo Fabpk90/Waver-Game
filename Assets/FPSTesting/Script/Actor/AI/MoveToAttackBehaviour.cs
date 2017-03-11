@@ -6,14 +6,6 @@ public class MoveToAttackBehaviour : MonoBehaviour {
 
     private Actor actorToChase = null;
 
-    private float attack;
-
-
-    private void Start()
-    {
-        attack = GetComponent<Actor>().attackDamage;
-    }
-
     // Update is called once per frame
     void Update () {
 

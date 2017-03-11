@@ -10,20 +10,15 @@ public class Weapon : BringableObject {
     public float distance;
     public float damage;
 
-    [SerializeField]
-    public int ammo;
-    [SerializeField]
+    
+    private int ammo; 
     public int ammoMax;
 
-    [SerializeField]
-    public int inMag;
-
-
-    [SerializeField]
+  
+    private int inMag;
     public int maxInMag;
     
-
-    [SerializeField]
+    
     public int fireCost;
 
     public float cooldown;
@@ -32,20 +27,45 @@ public class Weapon : BringableObject {
 
     public Mesh mesh;
 
+    public int InMag
+    {
+        get
+        {
+            return inMag;
+        }
+
+        set
+        {
+            inMag = value;
+        }
+    }
+
+    public int Ammo
+    {
+        get
+        {
+            return ammo;
+        }
+
+        set
+        {
+            ammo = value;
+        }
+    }
+
 
     // Use this for initialization
     void Start () {
         lastShot = 0;
+
+        Ammo = ammoMax;
+        InMag = maxInMag;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
 
     public bool CanShoot()
     {
-        if(inMag - fireCost >= 0 && Time.time >= lastShot)
+        if(InMag - fireCost >= 0 && Time.time >= lastShot)
         {
             return true;
         }
@@ -56,11 +76,30 @@ public class Weapon : BringableObject {
     public override void Use(ref Player player)
     {
         lastShot = Time.time + cooldown;
-        inMag -= fireCost;
+        InMag -= fireCost;
+
+        Shoot(player);
     }
 
-    public void Shoot()
-    {
-        inMag -= fireCost;
+    public void Shoot(Player player)
+    {    
+        RaycastHit hit;
+        Camera weaponCamera = player.GetComponentInChildren<Camera>();
+
+        //the ray position (center of the camera)
+        Vector3 rayOrigin = weaponCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
+
+
+        if (Physics.Raycast(rayOrigin, weaponCamera.transform.forward, out hit, distance))
+        {
+            if (hit.collider.GetComponent<EnemyController>() != null)
+            {
+                hit.rigidbody.AddForce(-hit.normal * damage);
+
+                EnemyController enemy = hit.collider.GetComponent<EnemyController>();
+
+                enemy.TakeDamage(damage);
+            }
+        }
     }
 }

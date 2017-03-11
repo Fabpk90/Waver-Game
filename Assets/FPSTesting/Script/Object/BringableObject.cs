@@ -11,6 +11,7 @@ namespace Assets.FPSTesting.Object
         public float weight;
         public Sprite image;
         public string description;
+        public string name;
 
         public int price;
 

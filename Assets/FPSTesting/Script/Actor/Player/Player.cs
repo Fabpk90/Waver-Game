@@ -7,12 +7,14 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class Player : Actor {
 
-    public Weapon weapon;
     public Camera weaponCamera;
 
     public Transform[] spawnPoints;
 
     public List<BringableObject> inventory;
+
+    //indicates which object the user has in his hands, refers to the inventory
+    private int objectInHand = 0;
 
     public List<AudioClip> fireShots;
 
@@ -22,7 +24,10 @@ public class Player : Actor {
 
 	// Use this for initialization
 	void Start () {
-        gameManager.InitHUD(weapon.inMag, weapon.ammo, weapon.description);
+
+        Weapon weapon = (Weapon) inventory[objectInHand];
+
+        gameManager.InitHUD(weapon.InMag, weapon.Ammo, weapon.name);
 	}
 	
 	// Update is called once per frame
@@ -30,11 +35,22 @@ public class Player : Actor {
        
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if(weapon.CanShoot())
+
+            if(inventory[objectInHand] is Weapon)
             {
-                Shoot();
-                gameManager.ShotFired(weapon.inMag, weapon.ammo);
-            }         
+                Weapon weapon = (Weapon) inventory[objectInHand];
+
+                if (weapon.CanShoot())
+                {
+                    Player player = this;
+
+                    weapon.Use(ref player);
+                    gameManager.ShotFired(weapon.InMag, weapon.Ammo);
+                    PlayRandomShotSound();
+                }
+
+            }
+                  
         }
         else if(Input.GetKeyDown(KeyCode.Tab))
         {
@@ -43,29 +59,7 @@ public class Player : Actor {
 		
 	}
 
-    private void Shoot()
-    {    
-        RaycastHit hit;
-
-        //the ray position (center of the camera)
-        Vector3 rayOrigin = weaponCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
-
-
-        if (Physics.Raycast(rayOrigin, weaponCamera.transform.forward, out hit, weapon.distance))
-        {       
-            if(hit.collider.GetComponent<EnemyController>() != null)
-            {
-                hit.rigidbody.AddForce(-hit.normal * weapon.damage);
-
-                EnemyController enemy = hit.collider.GetComponent<EnemyController>();
-
-                enemy.TakeDamage(weapon.damage);
-            }
-        }
-
-        PlayRandomShotSound();
-        weapon.Shoot();
-    }
+    
 
     private void PlayRandomShotSound()
     {
