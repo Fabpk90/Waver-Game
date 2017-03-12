@@ -8,8 +8,6 @@ namespace Assets.FPSTesting.Utils
     public  class GameManager : MonoBehaviour
     {
 
-        public AudioClip music;
-
         public int wave;
 
         public float time;

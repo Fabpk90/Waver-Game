@@ -1,9 +1,6 @@
 ﻿using Assets.FPSTesting.Object;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using UnityEditor;
 using Assets.FPSTesting.Script.Utils;
 
 public class Weapon : BringableObject {
@@ -59,9 +56,8 @@ public class Weapon : BringableObject {
         }
     }
 
-
-    // Use this for initialization
-    void Start () {
+    private void Awake()
+    {
         lastShot = 0;
 
         Ammo = ammoMax;
@@ -69,7 +65,6 @@ public class Weapon : BringableObject {
 
         IsReloading = false;
     }
-
 
     public bool CanShoot()
     {

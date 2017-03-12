@@ -6,6 +6,8 @@ public class MoveToAttackBehaviour : MonoBehaviour {
 
     private Actor actorToChase = null;
 
+    private bool isColliding = false;
+
     // Update is called once per frame
     void Update () {
 
@@ -25,6 +27,26 @@ public class MoveToAttackBehaviour : MonoBehaviour {
             actorToChase = other.GetComponent<Player>();
         }
     }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.GetComponent<Player>() != null)
+        {
+            isColliding = false;
+        }
+    }
+
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.GetComponent<Player>() != null)
+        {
+            isColliding = true;
+        }
+    }
+
+
 
 
     private void MoveTo(GameObject obj)
