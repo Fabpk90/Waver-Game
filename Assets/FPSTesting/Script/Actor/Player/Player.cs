@@ -56,11 +56,20 @@ public class Player : Actor {
         {
             gameManager.ToggleInventory();
         }
+        else if(Input.GetKeyDown(KeyCode.R))
+        {
+            if(inventory[objectInHand] is Weapon)
+            {
+                Weapon weapon = (Weapon)inventory[objectInHand];
+
+                if(weapon.Reload())
+                    gameManager.ShotFired(weapon.InMag, weapon.Ammo);
+            }
+        }
 		
 	}
 
     
-
     private void PlayRandomShotSound()
     {
         AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], transform.position);

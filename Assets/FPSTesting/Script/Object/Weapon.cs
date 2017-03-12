@@ -4,8 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEditor;
+using Assets.FPSTesting.Script.Utils;
 
 public class Weapon : BringableObject {
+
+    public List<AudioClip> reloadSounds;
+    public List<AudioClip> emptyMagSounds;
 
     public float distance;
     public float damage;
@@ -26,6 +30,8 @@ public class Weapon : BringableObject {
     private float lastShot;
 
     public Mesh mesh;
+
+    private bool IsReloading;
 
     public int InMag
     {
@@ -60,14 +66,24 @@ public class Weapon : BringableObject {
 
         Ammo = ammoMax;
         InMag = maxInMag;
+
+        IsReloading = false;
     }
 
 
     public bool CanShoot()
     {
-        if(InMag - fireCost >= 0 && Time.time >= lastShot)
+        if(IsReloading)
+        {
+            return false;
+        }
+        else if(InMag - fireCost >= 0 && Time.time >= lastShot)
         {
             return true;
+        }
+        else
+        {
+            playRandomSoundFromList(emptyMagSounds);
         }
 
         return false;
@@ -101,5 +117,50 @@ public class Weapon : BringableObject {
                 enemy.TakeDamage(damage);
             }
         }
+    }
+
+    public bool Reload()
+    {
+        if(!IsReloading)
+        {     
+            if(ammo != 0)
+            {
+                Invoke("ReloadFinished", playRandomSoundFromList(reloadSounds).length);
+
+                IsReloading = true;
+
+                ammo += inMag;
+                inMag = 0;
+
+                if(ammo >= maxInMag)
+                {
+                    ammo -= maxInMag;
+                    inMag = maxInMag;
+                }
+                else
+                {
+                    inMag = ammo;
+                    ammo = 0;
+                }
+
+                return true;
+            }          
+        }
+
+        return false;
+    }
+
+    private void ReloadFinished()
+    {
+        IsReloading = false;
+    }
+
+    private AudioClip playRandomSoundFromList(List<AudioClip> sounds)
+    {
+        AudioClip sound = ListUtil<AudioClip>.getRandomElement(sounds);
+
+        AudioSource.PlayClipAtPoint(sound, transform.position);
+
+        return sound;
     }
 }
