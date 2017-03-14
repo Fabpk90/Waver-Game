@@ -24,11 +24,11 @@ public class EnemyController : Actor
 		
 	}
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if(other.GetComponent<Actor>() != null)
+        if (collision.collider.GetComponent<Actor>() != null)
         {
-            Actor actor = other.GetComponent<Actor>();
+            Actor actor = collision.collider.GetComponent<Actor>();
             if (CanAttack() && actor.isPlayer)
             {
                 Attack(ref actor, attackDamage);
@@ -36,9 +36,28 @@ public class EnemyController : Actor
         }
     }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.GetComponent<Actor>() != null)
+        {
+            Actor actor = collision.collider.GetComponent<Actor>();
+            if (CanAttack() && actor.isPlayer)
+            {
+                Attack(ref actor, attackDamage);
+            }
+        }
+    }
+
+
     private bool CanAttack()
     {
-        return Time.time >= lastAttack + cooldownAttack ? true : false;
+        return Time.time >= (lastAttack + cooldownAttack) ? true : false;
+    }
+
+    public override bool Attack(ref Actor actor, float damage)
+    {
+        lastAttack = Time.time;
+        return base.Attack(ref actor, damage);
     }
 
     public override bool TakeDamage(float damage)

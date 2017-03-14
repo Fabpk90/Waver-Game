@@ -1,4 +1,5 @@
 ﻿using Assets.FPSTesting.Object;
+using Assets.FPSTesting.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,15 +7,27 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class Player : Actor {
 
-    public Weapon weapon;
     public Camera weaponCamera;
 
     public Transform[] spawnPoints;
 
     public List<BringableObject> inventory;
 
+    //indicates which object the user has in his hands, refers to the inventory
+    private int objectInHand = 0;
+
+    public List<AudioClip> fireShots;
+
+    public GameManager gameManager;
+
+    public List<AudioClip> painSounds;
+
 	// Use this for initialization
 	void Start () {
+
+        Weapon weapon = (Weapon) inventory[objectInHand];
+
+        gameManager.InitHUD(weapon.InMag, weapon.Ammo, weapon.name);
 	}
 	
 	// Update is called once per frame
@@ -22,32 +35,44 @@ public class Player : Actor {
        
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Shoot();
+
+            if(inventory[objectInHand] is Weapon)
+            {
+                Weapon weapon = (Weapon) inventory[objectInHand];
+
+                if (weapon.CanShoot())
+                {
+                    Player player = this;
+
+                    weapon.Use(ref player);
+                    gameManager.ShotFired(weapon.InMag, weapon.Ammo);
+                    PlayRandomShotSound();
+                }
+
+            }
+                  
+        }
+        else if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            gameManager.ToggleInventory();
+        }
+        else if(Input.GetKeyDown(KeyCode.R))
+        {
+            if(inventory[objectInHand] is Weapon)
+            {
+                Weapon weapon = (Weapon)inventory[objectInHand];
+
+                if(weapon.Reload())
+                    gameManager.ShotFired(weapon.InMag, weapon.Ammo);
+            }
         }
 		
 	}
 
-    private void Shoot()
+    
+    private void PlayRandomShotSound()
     {
-        RaycastHit hit;
-
-        //the ray position (center of the camera)
-        Vector3 rayOrigin = weaponCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.0f));
-
-
-        if (Physics.Raycast(rayOrigin, weaponCamera.transform.forward, out hit, weapon.distance))
-        {
-            
-           
-            if(hit.collider.GetComponent<EnemyController>() != null)
-            {
-                hit.rigidbody.AddForce(-hit.normal * weapon.damage);
-
-                EnemyController enemy = hit.collider.GetComponent<EnemyController>();
-
-                enemy.TakeDamage(weapon.damage);
-            }
-        }
+        AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], transform.position);
     }
 
     override public void Dying()
@@ -57,6 +82,13 @@ public class Player : Actor {
 
     private Vector3 GetRandomSpawnPoint()
     {
-        return spawnPoints[Random.Range(0, spawnPoints.Length)].position;
+        return spawnPoints[Random.Range(0, spawnPoints.Length - 1)].position;
+    }
+
+    public override bool TakeDamage(float damage)
+    {
+        AudioSource.PlayClipAtPoint(painSounds[Random.Range(0, painSounds.Count)], transform.position);
+
+        return base.TakeDamage(damage);
     }
 }
