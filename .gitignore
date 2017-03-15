@@ -1,5 +1,6 @@
-﻿################################################################################
-# Il file gitignore è stato creato automaticamente da Microsoft(R) Visual Studio.
-################################################################################
-
+﻿/Library/UnityAssemblies
+/Library/ShaderCache
+/Library/ScriptAssemblies
+/Library/metadata
 /Library
+/.vs/Project/v15
