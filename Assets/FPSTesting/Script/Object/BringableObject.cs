@@ -13,8 +13,19 @@ namespace Assets.FPSTesting.Object
         public string description;
         public string name;
 
+        public Mesh mesh;
+        private MeshFilter meshFilter;
+
         public int price;
 
         public abstract void Use(ref Player player);
+
+        private void Start()
+        {
+           meshFilter = gameObject.AddComponent<MeshFilter>();
+
+            
+            GetComponent<MeshFilter>().mesh = mesh;
+        }
     }
 }

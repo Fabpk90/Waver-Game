@@ -7,11 +7,13 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class Player : Actor {
 
+    public int money;
+
     public Camera weaponCamera;
 
     public Transform[] spawnPoints;
 
-    public List<BringableObject> inventory;
+    public Inventory inventory;
 
     //indicates which object the user has in his hands, refers to the inventory
     private int objectInHand = 0;
@@ -22,10 +24,14 @@ public class Player : Actor {
 
     public List<AudioClip> painSounds;
 
+    private int lastTimeSoundPlayed;
+
 	// Use this for initialization
 	void Start () {
 
-        Weapon weapon = (Weapon) inventory[objectInHand];
+        lastTimeSoundPlayed = 0;
+
+        Weapon weapon = (Weapon) inventory.getObjectInHand();
 
         gameManager.InitHUD(weapon.InMag, weapon.Ammo, weapon.name);
 	}
@@ -36,9 +42,9 @@ public class Player : Actor {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
 
-            if(inventory[objectInHand] is Weapon)
+            if(inventory.getObjectInHand() is Weapon)
             {
-                Weapon weapon = (Weapon) inventory[objectInHand];
+                Weapon weapon = (Weapon)inventory.getObjectInHand();
 
                 if (weapon.CanShoot())
                 {
@@ -58,9 +64,9 @@ public class Player : Actor {
         }
         else if(Input.GetKeyDown(KeyCode.R))
         {
-            if(inventory[objectInHand] is Weapon)
+            if(inventory.getObjectInHand() is Weapon)
             {
-                Weapon weapon = (Weapon)inventory[objectInHand];
+                Weapon weapon = (Weapon)inventory.getObjectInHand();
 
                 if(weapon.Reload())
                     gameManager.ShotFired(weapon.InMag, weapon.Ammo);
@@ -68,8 +74,6 @@ public class Player : Actor {
         }
 		
 	}
-
-    
     private void PlayRandomShotSound()
     {
         AudioSource.PlayClipAtPoint(fireShots[Random.Range(0, fireShots.Count)], transform.position);
@@ -87,7 +91,16 @@ public class Player : Actor {
 
     public override bool TakeDamage(float damage)
     {
-        AudioSource.PlayClipAtPoint(painSounds[Random.Range(0, painSounds.Count)], transform.position);
+        //if the last time is < than the time.tim then you can play the sound
+        if(Time.time >= lastTimeSoundPlayed)
+        {
+            AudioClip sound = painSounds[Random.Range(0, painSounds.Count)];
+            AudioSource.PlayClipAtPoint(sound, transform.position);
+
+            lastTimeSoundPlayed = (int) ( Time.time + sound.length );
+
+        }
+        
 
         return base.TakeDamage(damage);
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EnemyController : Actor
 {
+    public int moneyEarnWhenKill;
 
     public ParticleSystem dieParticle;
     public ParticleSystem damageParticle;

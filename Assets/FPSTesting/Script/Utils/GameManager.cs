@@ -10,7 +10,7 @@ namespace Assets.FPSTesting.Utils
 
         public int wave;
 
-        public float time;
+        static public float timeElapsed;
 
         public List<Player> listPlayer;
 
@@ -27,6 +27,8 @@ namespace Assets.FPSTesting.Utils
 
         private void Start()
         {
+            timeElapsed = 0.0f;
+
             listEnemy = new List<EnemyController>();
 
             GenerateWave(wave);
@@ -59,6 +61,12 @@ namespace Assets.FPSTesting.Utils
 
             }
         }
+
+        private void Update()
+        {
+            timeElapsed += Time.deltaTime;
+        }
+
 
         private int GetRandomSpawnPoint()
         {

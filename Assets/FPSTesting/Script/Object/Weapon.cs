@@ -26,8 +26,6 @@ public class Weapon : BringableObject {
 
     private float lastShot;
 
-    public Mesh mesh;
-
     private bool IsReloading;
 
     public int InMag
